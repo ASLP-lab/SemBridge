@@ -23,7 +23,6 @@ SemBridge is a continuous-latent autoregressive speech generation framework that
 
 It uses a shared semantic-token interface to align continuous acoustic representations and anchor the hidden states of the causal language model during training. The semantic anchoring branch is removed at inference, preserving autoregressive generation over continuous acoustic latents only.
 
-The first public release focuses on **44.1 kHz zero-shot text-to-speech inference**. Additional training and singing-generation components will be released progressively.
 
 For more details, please refer to our paper:
 
@@ -35,7 +34,7 @@ For more details, please refer to our paper:
 
 ## 🚀 News
 
-- **[2026-08]**: Released the initial SemBridge checkpoint and zero-shot TTS inference code.
+- **[2026-08]**: Released the initial SemBridge checkpoint and zero-shot TTS codebase.
 
 ## 🗺️ Roadmap
 
