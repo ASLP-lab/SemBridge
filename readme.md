@@ -5,24 +5,19 @@
 
   <p align="center">
     <img src="https://img.shields.io/badge/Python-3.10+-brightgreen.svg?logo=python&logoColor=white" alt="Python">
-    <a href="https://arxiv.org/submit/7924473/view"><img src="https://img.shields.io/badge/arXiv-Preview-b31b1b.svg?logo=arXiv" alt="arXiv preview"></a>
+    <a href="https://arxiv.org/submit/7924473/view"><img src="https://img.shields.io/badge/arXiv-Paper-b31b1b.svg?logo=arXiv" alt="arXiv preview"></a>
     <a href="https://tiamojames.github.io/SemBridge_Demo/"><img src="https://img.shields.io/badge/Demo-Page-orange.svg" alt="Demo"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License"></a>
   </p>
 
-  <p align="center">
-    <i>Training-only semantic-token anchoring for continuous-latent autoregressive speech generation.</i>
-  </p>
+  <!-- <p align="center">
+    <i>Semantic-token anchoring for continuous-latent autoregressive speech generation.</i>
+  </p> -->
 </div>
 
 ## 📖 Introduction
 
-SemBridge is a continuous-latent autoregressive speech generation framework that strengthens linguistic modeling through explicit semantic supervision while keeping inference lightweight.
-
-Continuous acoustic latents preserve rich prosody, timbre, and fine-grained speech detail, but purely continuous autoregressive modeling can make semantic control harder. SemBridge addresses this by introducing a semantic-token anchoring objective during training: continuous acoustic representations and causal language-model hidden states are aligned through a shared semantic-token interface, encouraging the generator to maintain a clearer connection between text semantics and acoustic generation.
-
-At inference time, the semantic anchoring branch is removed. SemBridge therefore generates speech autoregressively over continuous acoustic latents only, without requiring semantic-token generation or changing the runtime decoding procedure.
-
+SemBridge is a semantic-token anchoring framework for continuous-latent autoregressive speech generation. It uses a shared semantic tokenizer to supervise autoregressive LM states with discrete semantic tokens and align continuous acoustic latents, improving linguistic fidelity while maintaining high-quality continuous speech generation. For more details, please refer to our paper.
 <div align="center">
   <img src="asset/sembridge.png" alt="SemBridge model overview" width="95%">
 </div>
