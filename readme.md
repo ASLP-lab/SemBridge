@@ -5,7 +5,7 @@
 
   <p align="center">
     <img src="https://img.shields.io/badge/Python-3.10+-brightgreen.svg?logo=python&logoColor=white" alt="Python">
-    <a href="https://arxiv.org/submit/7924473/view"><img src="https://img.shields.io/badge/arXiv-Paper-b31b1b.svg?logo=arXiv" alt="arXiv preview"></a>
+    <a href="https://arxiv.org/pdf/2608.07462"><img src="https://img.shields.io/badge/arXiv-2608.07462-b31b1b.svg?logo=arXiv" alt="arXiv paper"></a>
     <a href="https://tiamojames.github.io/SemBridge_Demo/"><img src="https://img.shields.io/badge/Demo-Page-orange.svg" alt="Demo"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License"></a>
   </p>
@@ -24,7 +24,7 @@ SemBridge is a semantic-token anchoring framework for continuous-latent autoregr
 
 ## 🚀 News
 
-- **[2026-08]**: Released the [arXiv paper](https://arxiv.org/submit/7924473/view).
+- **[2026-08]**: Released the [arXiv paper](https://arxiv.org/pdf/2608.07462).
 
 ## 📝 Citation
 
