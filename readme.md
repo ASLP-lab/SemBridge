@@ -31,10 +31,11 @@ SemBridge is a semantic-token anchoring framework for continuous-latent autoregr
 If you find SemBridge useful in your research, please consider citing our paper:
 
 ```bibtex
-@misc{xie2026sembridge,
-  title  = {SemBridge: Semantic Token Anchoring for Continuous-Latent Autoregressive Speech Generation},
-  author = {Hanke Xie and Haopeng Lin and Jiale Qian and Dake Guo and Yuepeng Jiang and Zhichao Wang and Wenxiao Cao and Jingbin Hu and Guobin Ma and Wenhao Li and Huakang Chen and Chengyou Wang and Ming Tao and Zhonghua Fu and Lei Xie and Xinsheng Wang},
-  year   = {2026}
+@article{xie2026sembridge,
+  title={SemBridge: Semantic Token Anchoring for Continuous-Latent Autoregressive Speech Generation},
+  author={Xie, Hanke and Lin, Haopeng and Qian, Jiale and Guo, Dake and Jiang, Yuepeng and Wang, Zhichao and Cao, Wenxiao and Hu, Jingbin and Ma, Guobin and Li, Wenhao and others},
+  journal={arXiv preprint arXiv:2608.07462},
+  year={2026}
 }
 ```
 
