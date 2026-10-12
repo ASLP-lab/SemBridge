@@ -1,0 +1,155 @@
+{
+  "task": "unified",
+  "segments": [
+    {
+      "task": "speech",
+      "text": "各位观众，俺老孙今天也来唱上一段《隐形的翅膀》，听好了！"
+    },
+    {
+      "task": "singing",
+      "notes": [
+        {
+          "text": "我",
+          "pitch": 51,
+          "duration": 0.35,
+          "note_type": 2
+        },
+        {
+          "text": "看",
+          "pitch": 55,
+          "duration": 0.269,
+          "note_type": 2
+        },
+        {
+          "text": "看",
+          "pitch": 56,
+          "duration": 0.131,
+          "note_type": 3
+        },
+        {
+          "text": "见",
+          "pitch": 59,
+          "duration": 0.482,
+          "note_type": 2
+        },
+        {
+          "text": "见",
+          "pitch": 60,
+          "duration": 0.338,
+          "note_type": 3
+        },
+        {
+          "text": "<SP>",
+          "pitch": 0,
+          "duration": 0.48,
+          "note_type": 2
+        },
+        {
+          "text": "每",
+          "pitch": 61,
+          "duration": 0.174,
+          "note_type": 2
+        },
+        {
+          "text": "每",
+          "pitch": 63,
+          "duration": 0.206,
+          "note_type": 3
+        },
+        {
+          "text": "天",
+          "pitch": 63,
+          "duration": 0.5,
+          "note_type": 2
+        },
+        {
+          "text": "的",
+          "pitch": 63,
+          "duration": 0.30000000000000004,
+          "note_type": 2
+        },
+        {
+          "text": "夕",
+          "pitch": 64,
+          "duration": 0.333,
+          "note_type": 2
+        },
+        {
+          "text": "夕",
+          "pitch": 65,
+          "duration": 0.181,
+          "note_type": 3
+        },
+        {
+          "text": "阳",
+          "pitch": 63,
+          "duration": 0.398,
+          "note_type": 2
+        },
+        {
+          "text": "也",
+          "pitch": 62,
+          "duration": 0.205,
+          "note_type": 2
+        },
+        {
+          "text": "也",
+          "pitch": 63,
+          "duration": 0.243,
+          "note_type": 3
+        },
+        {
+          "text": "会",
+          "pitch": 60,
+          "duration": 0.48000000000000004,
+          "note_type": 2
+        },
+        {
+          "text": "有",
+          "pitch": 58,
+          "duration": 0.178,
+          "note_type": 2
+        },
+        {
+          "text": "有",
+          "pitch": 56,
+          "duration": 0.182,
+          "note_type": 3
+        },
+        {
+          "text": "变",
+          "pitch": 56,
+          "duration": 0.25,
+          "note_type": 2
+        },
+        {
+          "text": "变",
+          "pitch": 58,
+          "duration": 0.17,
+          "note_type": 3
+        },
+        {
+          "text": "化",
+          "pitch": 58,
+          "duration": 0.44000000000000006,
+          "note_type": 2
+        }
+      ]
+    },
+    {
+      "task": "speech",
+      "text": "这一曲唱罢，多谢大家捧场，俺老孙先走一步！"
+    }
+  ],
+  "prompt_text": "各位观众，嘿俺老孙多谢了。",
+  "prompt_task": "speech",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 106,
+    "max_new_patches": 383,
+    "flow_steps": 20,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/unified_zh_novel_wukong.wav"
+}

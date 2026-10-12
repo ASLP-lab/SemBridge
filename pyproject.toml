@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sembridge"
+version = "1.0.0"
+description = "Unified speech and singing generation with semantic-token anchoring"
+readme = "readme.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "SemBridge Authors" }]
+dependencies = [
+  "torch>=2.6,<2.9",
+  "torchaudio>=2.6,<2.9",
+  "soundfile>=0.12",
+  "einops>=0.7",
+  "pydantic>=2.6",
+  "safetensors>=0.4",
+  "numpy>=1.24",
+  "transformers>=4.44,<5",
+  "huggingface-hub>=0.24",
+]
+
+[project.urls]
+Homepage = "https://github.com/ASLP-lab/SemBridge"
+Demo = "https://tiamojames.github.io/SemBridge_Demo/"
+Paper = "https://arxiv.org/abs/2608.07462"
+Model = "https://huggingface.co/ASLP-lab/SemBridge"
+
+[project.scripts]
+sembridge-infer = "sembridge.cli:infer_main"
+
+[tool.setuptools.packages.find]
+include = ["sembridge*"]
+
+[tool.setuptools]
+include-package-data = false
+license-files = ["LICENSE", "LICENSES/*.txt", "THIRD_PARTY_NOTICES.md"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]

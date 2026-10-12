@@ -1,0 +1,106 @@
+{
+  "task": "svs",
+  "notes": [
+    {
+      "text": "when",
+      "pitch": 60,
+      "duration": 0.33,
+      "note_type": 2
+    },
+    {
+      "text": "he's",
+      "pitch": 60,
+      "duration": 0.25,
+      "note_type": 2
+    },
+    {
+      "text": "long",
+      "pitch": 66,
+      "duration": 0.29800000000000004,
+      "note_type": 2
+    },
+    {
+      "text": "long",
+      "pitch": 67,
+      "duration": 1.541,
+      "note_type": 3
+    },
+    {
+      "text": "long",
+      "pitch": 65,
+      "duration": 0.23199999999999998,
+      "note_type": 3
+    },
+    {
+      "text": "gone",
+      "pitch": 60,
+      "duration": 0.9200000000000002,
+      "note_type": 2
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 0.37,
+      "note_type": 2
+    },
+    {
+      "text": "and",
+      "pitch": 60,
+      "duration": 0.33,
+      "note_type": 2
+    },
+    {
+      "text": "he's",
+      "pitch": 60,
+      "duration": 0.19,
+      "note_type": 2
+    },
+    {
+      "text": "next",
+      "pitch": 66,
+      "duration": 0.294,
+      "note_type": 2
+    },
+    {
+      "text": "next",
+      "pitch": 67,
+      "duration": 1.377,
+      "note_type": 3
+    },
+    {
+      "text": "to",
+      "pitch": 67,
+      "duration": 0.26,
+      "note_type": 2
+    },
+    {
+      "text": "to",
+      "pitch": 65,
+      "duration": 0.22,
+      "note_type": 3
+    },
+    {
+      "text": "me",
+      "pitch": 62,
+      "duration": 0.83,
+      "note_type": 2
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 0.39,
+      "note_type": 1
+    }
+  ],
+  "prompt_text": "<|note_pitch_69|><|note_dur_14|>once<|note_pitch_65|><|note_dur_17|>upon<|note_pitch_65|><|note_dur_4|>a<|note_pitch_60|><|note_dur_35|>time<|note_pitch_60|><|note_dur_3|>a<|note_pitch_69|><|note_dur_19|>few<|note_pitch_65|><|note_dur_20|>mistakes<|note_pitch_60|><|note_dur_28|>ago<|note_pitch_0|><|note_dur_14|><SP><|note_pitch_68|><|note_dur_11|>i<|note_pitch_68|><|note_dur_11|>was<|note_pitch_65|><|note_dur_7|>in<|note_pitch_65|><|note_dur_6|>your<|note_pitch_60|><|note_dur_31|>sights<|note_pitch_0|><|note_dur_12|><SP><|note_pitch_68|><|note_dur_14|>you<|note_pitch_68|><|note_dur_10|>got<|note_pitch_65|><|note_dur_12|>me<|note_pitch_60|><|note_dur_27|>alone<|note_pitch_0|><|note_dur_10|><SP>",
+  "prompt_task": "singing",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 49,
+    "max_new_patches": 176,
+    "flow_steps": 20,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/svs_en_r002.wav"
+}

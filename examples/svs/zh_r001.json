@@ -1,0 +1,124 @@
+{
+  "task": "svs",
+  "notes": [
+    {
+      "text": "像",
+      "pitch": 50,
+      "duration": 0.39,
+      "note_type": 2
+    },
+    {
+      "text": "我",
+      "pitch": 53,
+      "duration": 0.17,
+      "note_type": 2
+    },
+    {
+      "text": "这",
+      "pitch": 55,
+      "duration": 0.281,
+      "note_type": 2
+    },
+    {
+      "text": "样",
+      "pitch": 53,
+      "duration": 0.219,
+      "note_type": 2
+    },
+    {
+      "text": "庸",
+      "pitch": 56,
+      "duration": 0.31,
+      "note_type": 2
+    },
+    {
+      "text": "俗",
+      "pitch": 51,
+      "duration": 0.42000000000000004,
+      "note_type": 2
+    },
+    {
+      "text": "的",
+      "pitch": 51,
+      "duration": 0.26,
+      "note_type": 2
+    },
+    {
+      "text": "人",
+      "pitch": 51,
+      "duration": 0.385,
+      "note_type": 2
+    },
+    {
+      "text": "人",
+      "pitch": 53,
+      "duration": 0.425,
+      "note_type": 3
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 1.01,
+      "note_type": 2
+    },
+    {
+      "text": "从",
+      "pitch": 54,
+      "duration": 0.36,
+      "note_type": 2
+    },
+    {
+      "text": "不",
+      "pitch": 52,
+      "duration": 0.16,
+      "note_type": 2
+    },
+    {
+      "text": "喜",
+      "pitch": 51,
+      "duration": 0.28,
+      "note_type": 2
+    },
+    {
+      "text": "欢",
+      "pitch": 53,
+      "duration": 0.24,
+      "note_type": 2
+    },
+    {
+      "text": "装",
+      "pitch": 55,
+      "duration": 0.37,
+      "note_type": 2
+    },
+    {
+      "text": "深",
+      "pitch": 56,
+      "duration": 0.36,
+      "note_type": 2
+    },
+    {
+      "text": "沉",
+      "pitch": 51,
+      "duration": 0.45899999999999996,
+      "note_type": 2
+    },
+    {
+      "text": "沉",
+      "pitch": 53,
+      "duration": 0.472,
+      "note_type": 3
+    }
+  ],
+  "prompt_text": "<|note_pitch_51|><|note_dur_16|>像<|note_pitch_53|><|note_dur_8|>我<|note_pitch_56|><|note_dur_10|>这<|note_pitch_53|><|note_dur_11|>样<|note_pitch_56|><|note_dur_12|>优<|note_pitch_52|><|note_dur_17|>秀<|note_pitch_51|><|note_dur_10|>的<|note_pitch_51|><|note_dur_15|><|note_pitch_53|><|note_dur_27|>人<|note_pitch_0|><|note_dur_35|><SP><|note_pitch_50|><|note_dur_8|>本<|note_pitch_53|><|note_dur_8|>该<|note_pitch_55|><|note_dur_13|>灿<|note_pitch_53|><|note_dur_8|>烂<|note_pitch_56|><|note_dur_12|><|note_pitch_52|><|note_dur_13|>过<|note_pitch_51|><|note_dur_11|>一<|note_pitch_53|><|note_dur_39|>生",
+  "prompt_task": "singing",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 41,
+    "max_new_patches": 148,
+    "flow_steps": 20,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/svs_zh_r001.wav"
+}

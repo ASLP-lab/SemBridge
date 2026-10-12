@@ -1,0 +1,126 @@
+{
+  "demo_url": "https://tiamojames.github.io/SemBridge_Demo/",
+  "demo_revision": "17688beb8f66ce4975fb109284445ae1abe233c3",
+  "examples": [
+    {
+      "id": "tts_zh_r001",
+      "title": "ZH speech 1",
+      "task": "tts",
+      "language": "zh",
+      "request": "tts/zh_r001.json",
+      "demo_case": "TTS_ZH_R001",
+      "source_corpus": "Seed-TTS",
+      "source_item": "00005290-00000120",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/sembridge/prompts/TTS_ZH_R001.wav",
+      "prompt_sha256": "88899d89dd1195491df4f507d61a079659469363fbb4f9e44fe1a88eefbab2b8"
+    },
+    {
+      "id": "tts_zh_r002",
+      "title": "ZH speech 2",
+      "task": "tts",
+      "language": "zh",
+      "request": "tts/zh_r002.json",
+      "demo_case": "TTS_ZH_R002",
+      "source_corpus": "Seed-TTS",
+      "source_item": "00004648-00000012",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/sembridge/prompts/TTS_ZH_R002.wav",
+      "prompt_sha256": "51b8dc70ad2d9c0292a24e8ae879ae2f41b6343527abaf0ad9790b4d5c8de068"
+    },
+    {
+      "id": "tts_en_r001",
+      "title": "EN speech 1",
+      "task": "tts",
+      "language": "en",
+      "request": "tts/en_r001.json",
+      "demo_case": "TTS_EN_R001",
+      "source_corpus": "Seed-TTS",
+      "source_item": "common_voice_en_684395-common_voice_en_684399",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/sembridge/prompts/TTS_EN_R001.wav",
+      "prompt_sha256": "04f50415737baf990196b5fc8c255b823360a25a53c2d8897fda593749e52646"
+    },
+    {
+      "id": "tts_en_r002",
+      "title": "EN speech 2",
+      "task": "tts",
+      "language": "en",
+      "request": "tts/en_r002.json",
+      "demo_case": "TTS_EN_R002",
+      "source_corpus": "Seed-TTS",
+      "source_item": "common_voice_en_21620052-common_voice_en_21620053",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/sembridge/prompts/TTS_EN_R002.wav",
+      "prompt_sha256": "d42804350571619496ee98b0bd44a271bb7eca1f795ddd5ed42928807ca2af27"
+    },
+    {
+      "id": "svs_zh_r001",
+      "title": "ZH R001",
+      "task": "svs",
+      "language": "zh",
+      "request": "svs/zh_r001.json",
+      "demo_case": "SVS_ZH_R001",
+      "source_corpus": "GTSinger",
+      "source_item": "GTSinger#ZH-Tenor-1#Breathy#像我这样的人#Control_Group#0006",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/sembridge/prompts/SVS_ZH_R001.wav",
+      "prompt_sha256": "9a3397b67d4f919ca58d2f95e05288423b8f2cf1c8a82cfb787c4729c2d7a570"
+    },
+    {
+      "id": "svs_zh_r002",
+      "title": "ZH R002",
+      "task": "svs",
+      "language": "zh",
+      "request": "svs/zh_r002.json",
+      "demo_case": "SVS_ZH_R002",
+      "source_corpus": "Opencpop",
+      "source_item": "Opencpop#opencpop#2044#2044001655",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/sembridge/prompts/SVS_ZH_R002.wav",
+      "prompt_sha256": "8e7c37dac27a39c38d2fd3ca3bc8d72ee290e3bf32bf8580fa7d67c80bc15e3f"
+    },
+    {
+      "id": "svs_en_r001",
+      "title": "EN R001",
+      "task": "svs",
+      "language": "en",
+      "request": "svs/en_r001.json",
+      "demo_case": "SVS_EN_R001",
+      "source_corpus": "GTSinger",
+      "source_item": "GTSinger#EN-Alto-1#Mixed_Voice_and_Falsetto#yesterday once more#Mixed_Voice_Group#0003",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/sembridge/prompts/SVS_EN_R001.wav",
+      "prompt_sha256": "36f86e0beaa9ff8affecc7c1d0ff8a627237fe7131e16de84828d2cac8e410eb"
+    },
+    {
+      "id": "svs_en_r002",
+      "title": "EN R002",
+      "task": "svs",
+      "language": "en",
+      "request": "svs/en_r002.json",
+      "demo_case": "SVS_EN_R002",
+      "source_corpus": "GTSinger",
+      "source_item": "GTSinger#EN-Tenor-1#Glissando#I Knew You Were Trouble#Glissando_Group#0004",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/sembridge/prompts/SVS_EN_R002.wav",
+      "prompt_sha256": "04433b3645f0a2f72260b3b2307488d3bf9a07893234e3dbb8c69689087cffd6"
+    },
+    {
+      "id": "unified_zh_robust_caihong",
+      "title": "ZH U002 - 彩虹",
+      "task": "unified",
+      "language": "zh",
+      "request": "unified/zh_robust_caihong.json",
+      "demo_case": "unified_zh_robust_caihong",
+      "source_corpus": "GTSinger",
+      "source_item": "GTSinger#ZH-Tenor-1#Glissando#彩虹#Glissando_Group#0011",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/unified/unified_zh_robust_caihong/prompt.wav",
+      "prompt_sha256": "b0651108a3d4bc5dca4bc7646a530de3d45f0831d3b147211890a5258c0bb7e9"
+    },
+    {
+      "id": "unified_zh_novel_wukong",
+      "title": "ZH U004 - 隐形的翅膀",
+      "task": "unified",
+      "language": "zh",
+      "request": "unified/zh_novel_wukong.json",
+      "demo_case": "unified_zh_novel_wukong",
+      "source_corpus": "GTSinger",
+      "source_item": "GTSinger#ZH-Tenor-1#Pharyngeal#隐形的翅膀#Pharyngeal_Group#0011",
+      "prompt_source": "https://raw.githubusercontent.com/tiamojames/SemBridge_Demo/17688beb8f66ce4975fb109284445ae1abe233c3/audio/unified/unified_zh_novel_wukong/prompt.wav",
+      "prompt_sha256": "89f4816b8d04d0852001b0341b7bfde95ab11c019d1834678c5f0c0e1292ae11"
+    }
+  ]
+}

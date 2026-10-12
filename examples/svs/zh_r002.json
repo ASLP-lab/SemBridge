@@ -1,0 +1,112 @@
+{
+  "task": "svs",
+  "notes": [
+    {
+      "text": "在",
+      "pitch": 67,
+      "duration": 0.27169,
+      "note_type": 2
+    },
+    {
+      "text": "我",
+      "pitch": 67,
+      "duration": 0.29815,
+      "note_type": 2
+    },
+    {
+      "text": "的",
+      "pitch": 68,
+      "duration": 0.15312,
+      "note_type": 2
+    },
+    {
+      "text": "怀",
+      "pitch": 67,
+      "duration": 0.35986,
+      "note_type": 2
+    },
+    {
+      "text": "里",
+      "pitch": 65,
+      "duration": 0.22367,
+      "note_type": 2
+    },
+    {
+      "text": "你",
+      "pitch": 63,
+      "duration": 0.29368,
+      "note_type": 2
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 0.17403,
+      "note_type": 2
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 0.07269,
+      "note_type": 2
+    },
+    {
+      "text": "不",
+      "pitch": 63,
+      "duration": 0.24135,
+      "note_type": 2
+    },
+    {
+      "text": "用",
+      "pitch": 60,
+      "duration": 0.20797,
+      "note_type": 2
+    },
+    {
+      "text": "害",
+      "pitch": 63,
+      "duration": 0.29612,
+      "note_type": 2
+    },
+    {
+      "text": "怕",
+      "pitch": 60,
+      "duration": 0.10188,
+      "note_type": 2
+    },
+    {
+      "text": "失",
+      "pitch": 65,
+      "duration": 0.26938,
+      "note_type": 2
+    },
+    {
+      "text": "失",
+      "pitch": 67,
+      "duration": 0.28258,
+      "note_type": 3
+    },
+    {
+      "text": "眠",
+      "pitch": 58,
+      "duration": 0.62981,
+      "note_type": 2
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 0.43076,
+      "note_type": 1
+    }
+  ],
+  "prompt_text": "<|note_pitch_60|><|note_dur_9|>雨<|note_pitch_62|><|note_dur_7|>淋<|note_pitch_62|><|note_dur_14|>湿<|note_pitch_62|><|note_dur_7|>了<|note_pitch_0|><|note_dur_3|><SP><|note_pitch_62|><|note_dur_11|>天<|note_pitch_58|><|note_dur_20|>空<|note_pitch_0|><|note_dur_8|><SP><|note_pitch_58|><|note_dur_13|>灰<|note_pitch_58|><|note_dur_4|>得<|note_pitch_0|><|note_dur_5|><SP><|note_pitch_58|><|note_dur_10|>更<|note_pitch_58|><|note_dur_20|>讲<|note_pitch_63|><|note_dur_19|>究<|note_pitch_0|><|note_dur_14|><SP>",
+  "prompt_task": "singing",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 27,
+    "max_new_patches": 97,
+    "flow_steps": 20,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/svs_zh_r002.wav"
+}

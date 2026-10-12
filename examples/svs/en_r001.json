@@ -1,0 +1,208 @@
+{
+  "task": "svs",
+  "notes": [
+    {
+      "text": "how",
+      "pitch": 58,
+      "duration": 0.3,
+      "note_type": 2
+    },
+    {
+      "text": "i",
+      "pitch": 61,
+      "duration": 0.36,
+      "note_type": 2
+    },
+    {
+      "text": "wondered",
+      "pitch": 63,
+      "duration": 0.9989999999999999,
+      "note_type": 2
+    },
+    {
+      "text": "wondered",
+      "pitch": 65,
+      "duration": 0.411,
+      "note_type": 3
+    },
+    {
+      "text": "where",
+      "pitch": 58,
+      "duration": 0.31,
+      "note_type": 2
+    },
+    {
+      "text": "they'd",
+      "pitch": 61,
+      "duration": 0.6799999999999999,
+      "note_type": 2
+    },
+    {
+      "text": "gone",
+      "pitch": 62,
+      "duration": 0.364,
+      "note_type": 2
+    },
+    {
+      "text": "gone",
+      "pitch": 63,
+      "duration": 0.8560000000000001,
+      "note_type": 3
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 0.56,
+      "note_type": 2
+    },
+    {
+      "text": "but",
+      "pitch": 64,
+      "duration": 0.71,
+      "note_type": 2
+    },
+    {
+      "text": "they're",
+      "pitch": 68,
+      "duration": 0.601,
+      "note_type": 2
+    },
+    {
+      "text": "back",
+      "pitch": 66,
+      "duration": 0.41000000000000003,
+      "note_type": 2
+    },
+    {
+      "text": "again",
+      "pitch": 63,
+      "duration": 1.2199999999999998,
+      "note_type": 2
+    },
+    {
+      "text": "just",
+      "pitch": 65,
+      "duration": 0.39,
+      "note_type": 2
+    },
+    {
+      "text": "like",
+      "pitch": 66,
+      "duration": 0.4,
+      "note_type": 2
+    },
+    {
+      "text": "a",
+      "pitch": 65,
+      "duration": 0.21,
+      "note_type": 2
+    },
+    {
+      "text": "long",
+      "pitch": 65,
+      "duration": 0.312,
+      "note_type": 2
+    },
+    {
+      "text": "long",
+      "pitch": 66,
+      "duration": 0.368,
+      "note_type": 3
+    },
+    {
+      "text": "lost",
+      "pitch": 65,
+      "duration": 0.37,
+      "note_type": 2
+    },
+    {
+      "text": "friend",
+      "pitch": 63,
+      "duration": 0.59,
+      "note_type": 2
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 0.36,
+      "note_type": 2
+    },
+    {
+      "text": "all",
+      "pitch": 63,
+      "duration": 0.29000000000000004,
+      "note_type": 2
+    },
+    {
+      "text": "the",
+      "pitch": 65,
+      "duration": 0.26,
+      "note_type": 2
+    },
+    {
+      "text": "songs",
+      "pitch": 65,
+      "duration": 0.36,
+      "note_type": 2
+    },
+    {
+      "text": "songs",
+      "pitch": 66,
+      "duration": 0.44999999999999996,
+      "note_type": 3
+    },
+    {
+      "text": "i",
+      "pitch": 66,
+      "duration": 0.312,
+      "note_type": 2
+    },
+    {
+      "text": "i",
+      "pitch": 63,
+      "duration": 0.319,
+      "note_type": 3
+    },
+    {
+      "text": "loved",
+      "pitch": 63,
+      "duration": 0.23,
+      "note_type": 2
+    },
+    {
+      "text": "so",
+      "pitch": 66,
+      "duration": 0.7000000000000001,
+      "note_type": 2
+    },
+    {
+      "text": "well",
+      "pitch": 66,
+      "duration": 0.357,
+      "note_type": 2
+    },
+    {
+      "text": "well",
+      "pitch": 68,
+      "duration": 1.0430000000000001,
+      "note_type": 3
+    },
+    {
+      "text": "<SP>",
+      "pitch": 0,
+      "duration": 0.2,
+      "note_type": 1
+    }
+  ],
+  "prompt_text": "<|note_pitch_0|><|note_dur_110|><SP><|note_pitch_55|><|note_dur_20|>when<|note_pitch_54|><|note_dur_7|>i<|note_pitch_56|><|note_dur_17|>was<|note_pitch_58|><|note_dur_10|><|note_pitch_59|><|note_dur_18|>young<|note_pitch_60|><|note_dur_9|><|note_pitch_61|><|note_dur_11|>i'd<|note_pitch_59|><|note_dur_30|>listen<|note_pitch_60|><|note_dur_7|>to<|note_pitch_62|><|note_dur_9|><|note_pitch_59|><|note_dur_14|>the<|note_pitch_61|><|note_dur_56|><|note_pitch_58|><|note_dur_12|>radio<|note_pitch_0|><|note_dur_16|><SP>",
+  "prompt_task": "singing",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 96,
+    "max_new_patches": 344,
+    "flow_steps": 20,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/svs_en_r001.wav"
+}

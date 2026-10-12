@@ -1,0 +1,113 @@
+{
+  "task": "unified",
+  "segments": [
+    {
+      "task": "speech",
+      "text": "夜深了，送给大家一段《彩虹》，也送给那个让我一直牵挂的人。"
+    },
+    {
+      "task": "singing",
+      "notes": [
+        {
+          "text": "看",
+          "pitch": 55,
+          "duration": 0.37,
+          "note_type": 2
+        },
+        {
+          "text": "不",
+          "pitch": 64,
+          "duration": 0.266,
+          "note_type": 2
+        },
+        {
+          "text": "不",
+          "pitch": 65,
+          "duration": 0.184,
+          "note_type": 3
+        },
+        {
+          "text": "见",
+          "pitch": 64,
+          "duration": 0.4,
+          "note_type": 2
+        },
+        {
+          "text": "你",
+          "pitch": 62,
+          "duration": 0.45999999999999996,
+          "note_type": 2
+        },
+        {
+          "text": "的",
+          "pitch": 60,
+          "duration": 0.199,
+          "note_type": 2
+        },
+        {
+          "text": "笑",
+          "pitch": 60,
+          "duration": 0.591,
+          "note_type": 2
+        },
+        {
+          "text": "我",
+          "pitch": 60,
+          "duration": 0.26,
+          "note_type": 2
+        },
+        {
+          "text": "怎",
+          "pitch": 58,
+          "duration": 0.301,
+          "note_type": 2
+        },
+        {
+          "text": "怎",
+          "pitch": 59,
+          "duration": 0.219,
+          "note_type": 3
+        },
+        {
+          "text": "么",
+          "pitch": 60,
+          "duration": 0.28099999999999997,
+          "note_type": 2
+        },
+        {
+          "text": "睡",
+          "pitch": 62,
+          "duration": 0.549,
+          "note_type": 2
+        },
+        {
+          "text": "得",
+          "pitch": 63,
+          "duration": 0.34,
+          "note_type": 2
+        },
+        {
+          "text": "着",
+          "pitch": 55,
+          "duration": 1.59,
+          "note_type": 2
+        }
+      ]
+    },
+    {
+      "task": "speech",
+      "text": "愿这段旋律陪你入梦，我们下次再见。"
+    }
+  ],
+  "prompt_text": "<|note_pitch_50|><|note_dur_11|>有<|note_pitch_51|><|note_dur_18|><|note_pitch_52|><|note_dur_19|>没<|note_pitch_52|><|note_dur_12|>有<|note_pitch_52|><|note_dur_16|>口<|note_pitch_51|><|note_dur_12|><|note_pitch_52|><|note_dur_9|>罩<|note_pitch_54|><|note_dur_13|>一<|note_pitch_55|><|note_dur_14|>个<|note_pitch_55|><|note_dur_30|>给<|note_pitch_0|><|note_dur_6|><SP><|note_pitch_60|><|note_dur_9|><|note_pitch_62|><|note_dur_8|><|note_pitch_60|><|note_dur_35|>我",
+  "prompt_task": "singing",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 101,
+    "max_new_patches": 362,
+    "flow_steps": 20,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/unified_zh_robust_caihong.wav"
+}

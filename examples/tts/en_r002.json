@@ -1,0 +1,15 @@
+{
+  "task": "tts",
+  "text": "At least five species of reptiles have been recorded for the island.",
+  "prompt_text": "Therefore, the experimental group provided more internal attributions towards the writer.",
+  "prompt_task": "speech",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 2,
+    "max_new_patches": 500,
+    "flow_steps": 10,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/tts_en_r002.wav"
+}

@@ -1,0 +1,15 @@
+{
+  "task": "tts",
+  "text": "我箱子里有一套夏装，可是现在穿它也未免太不成体统了。",
+  "prompt_text": "缓缓回神，眼前的却是那辆应该搭上的列车远离。",
+  "prompt_task": "speech",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 2,
+    "max_new_patches": 500,
+    "flow_steps": 10,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/tts_zh_r001.wav"
+}

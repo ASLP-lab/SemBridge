@@ -1,0 +1,15 @@
+{
+  "task": "tts",
+  "text": "即使拉斯维加斯的赌场，在奢华的程度上都很难媲美。",
+  "prompt_text": "另外根据中央气象台的未来七天降雨预报。",
+  "prompt_task": "speech",
+  "generation": {
+    "seed": 42,
+    "min_new_patches": 2,
+    "max_new_patches": 500,
+    "flow_steps": 10,
+    "cfg_value": 2,
+    "temperature": 1
+  },
+  "prompt_audio": "../audio/tts_zh_r002.wav"
+}
