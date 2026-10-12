@@ -149,14 +149,10 @@ See [third-party notices](THIRD_PARTY_NOTICES.md) for implementation attribution
 If you find SemBridge useful in your research, please cite:
 
 ```bibtex
-@misc{xie2026sembridge,
-  title = {SemBridge: Semantic Token Anchoring for
-           Continuous-Latent Autoregressive Speech Generation},
-  author = {Hanke Xie and Haopeng Lin and Jiale Qian and
-            Dake Guo and Yuepeng Jiang and Zhichao Wang and
-            Wenxiao Cao and Jingbin Hu and Guobin Ma and
-            Wenhao Li and Huakang Chen and Chengyou Wang and
-            Ming Tao and Zhonghua Fu and Lei Xie and Xinsheng Wang},
+@article{xie2026sembridge,
+  title = {SemBridge: Semantic Token Anchoring for Continuous-Latent Autoregressive Speech Generation},
+  author = {Hanke Xie and Haopeng Lin and Jiale Qian and Dake Guo and Yuepeng Jiang and Zhichao Wang and Wenxiao Cao and Jingbin Hu and Guobin Ma and Wenhao Li and Huakang Chen and Chengyou Wang and Ming Tao and Zhonghua Fu and Lei Xie and Xinsheng Wang},
+  journal = {arXiv preprint arXiv:2608.07462},
   year = {2026},
   eprint = {2608.07462},
   archivePrefix = {arXiv},
