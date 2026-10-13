@@ -25,7 +25,7 @@ The unified model supports **text-to-speech**, **note-conditioned singing**, and
 **mixed speech and singing**.
 
 <div align="center">
-  <img src="asset/sembridge.png" alt="SemBridge architecture: semantic anchoring for continuous-latent autoregressive generation" width="100%">
+  <img src="asset/sembridge_model.png" alt="SemBridge architecture: semantic anchoring for continuous-latent autoregressive generation" width="100%">
 </div>
 
 ## News
