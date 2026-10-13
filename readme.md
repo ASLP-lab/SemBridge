@@ -1,5 +1,9 @@
 <div align="center">
-  <h1><img src="asset/sembridge-icon-transparent.png" alt="" width="72" height="30" align="absmiddle"> SemBridge</h1>
+  <h1 align="center">
+    <picture><source media="(max-width: 350px)" srcset="asset/sembridge-icon-transparent.png" width="32" height="13"><source media="(max-width: 480px)" srcset="asset/sembridge-icon-transparent.png" width="48" height="20"><img src="asset/sembridge-icon-transparent.png" alt="" width="72" height="28" align="bottom"></picture>
+    SemBridge
+    <picture><source media="(max-width: 350px)" srcset="asset/sembridge-heading-spacer.svg" width="32" height="13"><source media="(max-width: 480px)" srcset="asset/sembridge-heading-spacer.svg" width="48" height="20"><img src="asset/sembridge-heading-spacer.svg" alt="" width="72" height="28"></picture>
+  </h1>
   <p><strong>Semantic Token Anchoring for Continuous-Latent Autoregressive Speech Generation</strong></p>
   <p><em>Speech. Singing. One continuous voice.</em></p>
   <p>
