@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>SemBridge</h1>
+  <h1><img src="asset/sembridge-icon.png" alt="" width="72" height="72" align="middle"> SemBridge</h1>
   <p><strong>Semantic Token Anchoring for Continuous-Latent Autoregressive Speech Generation</strong></p>
   <p><em>Speech. Singing. One continuous voice.</em></p>
   <p>
