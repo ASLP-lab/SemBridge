@@ -101,4 +101,4 @@ their Demo sample IDs.
 
 These sample assets retain their original rights and terms; they are not covered
 by the source-code Apache-2.0 license. See the
-[third-party notices](../THIRD_PARTY_NOTICES.md).
+[license and third-party notices](../LICENSE).

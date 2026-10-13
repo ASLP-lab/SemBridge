@@ -54,7 +54,8 @@ python -m pip install -e .
 
 For other CUDA versions or CPU-only installation, use the
 [official PyTorch installation commands](https://pytorch.org/get-started/previous-versions/).
-Keep the `torch` and `torchaudio` versions matched.
+Keep the `torch` and `torchaudio` versions matched. Run the examples below from
+the repository root.
 
 ## Inference
 
@@ -142,8 +143,6 @@ We thank the authors of the following projects for their open research and resou
 - **Speech generation:** [VoxCPM](https://github.com/OpenBMB/VoxCPM) and [DiTAR](https://arxiv.org/abs/2502.03930).
 - **Audio codecs:** [DAC](https://github.com/descriptinc/descript-audio-codec), [SAC](https://github.com/Soul-AILab/SAC), and [BigVGAN](https://github.com/NVIDIA/BigVGAN).
 
-See [third-party notices](THIRD_PARTY_NOTICES.md) for implementation attributions.
-
 ## Citation
 
 If you find SemBridge useful in your research, please cite:
@@ -163,6 +162,7 @@ If you find SemBridge useful in your research, please cite:
 
 ## License
 
-Code is released under [Apache-2.0](LICENSE).
+SemBridge code is released under Apache-2.0; upstream portions retain their
+original licenses. See [LICENSE](LICENSE) for terms and third-party notices.
 Model weights and third-party resources are subject to their respective licenses.
 Use reference recordings only with permission, and disclose synthetic audio where appropriate.

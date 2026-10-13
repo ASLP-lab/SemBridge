@@ -36,7 +36,7 @@ include = ["sembridge*"]
 
 [tool.setuptools]
 include-package-data = false
-license-files = ["LICENSE", "LICENSES/*.txt", "THIRD_PARTY_NOTICES.md"]
+license-files = ["LICENSE"]
 
 [tool.ruff]
 line-length = 100

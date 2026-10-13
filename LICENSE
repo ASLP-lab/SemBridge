@@ -199,3 +199,110 @@ Apache License
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+-------------------------------------------------------------------------------
+Third-Party Components and Assets
+-------------------------------------------------------------------------------
+
+The Apache-2.0 license above applies to SemBridge source code except for upstream
+portions governed by their original licenses below. Model weights, tokenizer
+artifacts, runtime dependencies, and example assets retain their own terms.
+
+VoxCPM / OpenBMB
+---------------
+Portions of the causal language model, local encoder, and flow-matching speech
+generator are adapted from VoxCPM and OpenBMB components under Apache-2.0.
+SemBridge adapts task conditioning and semantic anchoring while retaining
+parameter names for checkpoint compatibility.
+https://github.com/OpenBMB/VoxCPM
+
+BigVGAN / alias-free-torch
+-------------------------
+sembridge/models/bigvgan.py is adapted from NVIDIA BigVGAN (MIT) and
+alias-free-torch (Apache-2.0). It uses the pure-PyTorch AMPBlock1 path without
+custom CUDA kernels. This code repository does not redistribute BigVGAN
+pretrained weights.
+https://github.com/NVIDIA/BigVGAN
+https://github.com/junjun3518/alias-free-torch
+
+MIT License
+
+Copyright (c) 2024 NVIDIA CORPORATION.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Descript Audio Codec (DAC)
+-------------------------
+The acoustic codec draws on Descript Audio Codec, licensed under MIT.
+https://github.com/descriptinc/descript-audio-codec
+
+MIT License
+
+Copyright (c) 2023-present, Descript
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Research Acknowledgements
+-------------------------
+We acknowledge DiTAR and SAC for their research on speech generation and
+semantic-acoustic representations. A research acknowledgement does not imply
+that a project's code or weights are included in this repository.
+https://arxiv.org/abs/2502.03930
+https://github.com/Soul-AILab/SAC
+
+External Semantic Tokenizer
+---------------------------
+SemBridge uses GLM-4-Voice semantic supervision during training. Its external
+semantic tokenizer is not required for inference, and its code and weights
+are not included in this repository.
+https://github.com/THUDM/GLM-4-Voice
+
+The GLM tokenizer has its own model license, including attribution and
+redistribution conditions. Consult the official model repository for the
+applicable terms. SemBridge's code license does not replace those terms or
+grant additional rights to external assets.
+https://huggingface.co/zai-org/glm-4-voice-tokenizer
+
+Runtime Dependencies
+--------------------
+PyTorch, torchaudio, Transformers, SoundFile, Pydantic, einops, safetensors,
+NumPy, and huggingface-hub retain their own licenses and notices.
+
+Example Assets
+--------------
+Selected reference recordings and score annotations from the public SemBridge
+Demo are included in examples/ for inference. Their source corpora, original
+sample identifiers, public audio URLs, and reference hashes are recorded in
+examples/index.json. These assets are not re-licensed under the source-code
+Apache-2.0 license; their original rights and applicable terms remain in effect.
+https://tiamojames.github.io/SemBridge_Demo/
