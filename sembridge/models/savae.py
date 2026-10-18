@@ -55,8 +55,10 @@ class PowerSphericalDistribution:
         return torch.where(parallel, sample, result)
 
 
-@torch.jit.script
 def snake(inputs: torch.Tensor, alpha: torch.Tensor) -> torch.Tensor:
+    # Deliberately not @torch.jit.script: TorchScript re-optimizes a scripted function after its first calls, and the
+    # optimized version gives slightly different float32 results, so the first generation after loading differed from
+    # all later ones for the same request and seed. Plain ops give the same numbers on every call.
     shape = inputs.shape
     flattened = inputs.reshape(shape[0], shape[1], -1)
     flattened = flattened + (alpha + 1e-9).reciprocal() * torch.sin(
