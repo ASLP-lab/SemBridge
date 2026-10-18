@@ -1,4 +1,4 @@
-"""Frozen text-tokenizer contract used by SemBridge training and inference."""
+"""Text and score tokenization for SemBridge inference."""
 
 from __future__ import annotations
 
@@ -8,78 +8,16 @@ from typing import Any, Iterable, Sequence
 
 SPEECH_TASK_TOKEN = "<|speech|>"
 SINGING_TASK_TOKEN = "<|singing|>"
-EXPECTED_TEXT_VOCAB_SIZE = 74_080
-EXPECTED_SPEECH_TASK_ID = 74_078
-EXPECTED_SINGING_TASK_ID = 74_079
-
-
-def svs_special_tokens() -> list[str]:
-    return (
-        [f"<|note_pitch_{index}|>" for index in range(129)]
-        + [f"<|note_dur_{index}|>" for index in range(500)]
-        + ["<SP>", SPEECH_TASK_TOKEN, SINGING_TASK_TOKEN]
-    )
-
-
-def _base_tokenizer(tokenizer: Any) -> Any:
-    return getattr(tokenizer, "tokenizer", tokenizer)
-
-
-def extend_svs_vocabulary(tokenizer: Any) -> Any:
-    """Add the 632 SVS symbols in the historical order and verify fixed IDs."""
-
-    tokenizer.add_special_tokens({"additional_special_tokens": svs_special_tokens()})
-    speech_id = int(tokenizer.convert_tokens_to_ids(SPEECH_TASK_TOKEN))
-    singing_id = int(tokenizer.convert_tokens_to_ids(SINGING_TASK_TOKEN))
-    if len(tokenizer) != EXPECTED_TEXT_VOCAB_SIZE:
-        raise ValueError(
-            f"SemBridge tokenizer must contain {EXPECTED_TEXT_VOCAB_SIZE} tokens, "
-            f"got {len(tokenizer)}"
-        )
-    if (speech_id, singing_id) != (
-        EXPECTED_SPEECH_TASK_ID,
-        EXPECTED_SINGING_TASK_ID,
-    ):
-        raise ValueError(
-            "SemBridge task-token IDs differ from the released checkpoint: "
-            f"speech={speech_id}, singing={singing_id}"
-        )
-    return tokenizer
 
 
 def load_text_tokenizer(path_or_id: str | Path, *, revision: str | None = None):
-    """Load the checkpoint tokenizer and repair legacy archives missing SVS tokens."""
+    """Load the tokenizer bundled with the model."""
 
-    try:
-        from transformers import LlamaTokenizerFast
-    except ImportError as exc:
-        raise RuntimeError("transformers is required for text tokenization") from exc
+    from transformers import LlamaTokenizerFast
 
-    kwargs: dict[str, Any] = {}
-    if revision is not None:
-        kwargs["revision"] = revision
-    try:
-        tokenizer = LlamaTokenizerFast.from_pretrained(str(path_or_id), **kwargs)
-    except AttributeError as exc:
-        if "keys" not in str(exc):
-            raise
-        kwargs["extra_special_tokens"] = {}
-        tokenizer = LlamaTokenizerFast.from_pretrained(str(path_or_id), **kwargs)
-    if len(tokenizer) < EXPECTED_TEXT_VOCAB_SIZE:
-        extend_svs_vocabulary(tokenizer)
-    else:
-        speech_id = int(tokenizer.convert_tokens_to_ids(SPEECH_TASK_TOKEN))
-        singing_id = int(tokenizer.convert_tokens_to_ids(SINGING_TASK_TOKEN))
-        if (len(tokenizer), speech_id, singing_id) != (
-            EXPECTED_TEXT_VOCAB_SIZE,
-            EXPECTED_SPEECH_TASK_ID,
-            EXPECTED_SINGING_TASK_ID,
-        ):
-            raise ValueError(
-                "tokenizer is incompatible with "
-                "SemBridge-Unified-0722-BigVGAN-Large-400k"
-            )
-    return CharacterAwareTokenizer(tokenizer)
+    return CharacterAwareTokenizer(
+        LlamaTokenizerFast.from_pretrained(str(path_or_id), revision=revision)
+    )
 
 
 class CharacterAwareTokenizer:
@@ -111,13 +49,10 @@ class CharacterAwareTokenizer:
     def task_token_id(self, task: str) -> int:
         normalized = task.lower()
         if normalized in {"tts", "speech"}:
-            return EXPECTED_SPEECH_TASK_ID
+            return int(self.tokenizer.convert_tokens_to_ids(SPEECH_TASK_TOKEN))
         if normalized in {"svs", "singing"}:
-            return EXPECTED_SINGING_TASK_ID
+            return int(self.tokenizer.convert_tokens_to_ids(SINGING_TASK_TOKEN))
         raise ValueError(f"unknown SemBridge task {task!r}")
-
-    def save_pretrained(self, destination: str | Path) -> None:
-        self.tokenizer.save_pretrained(str(destination))
 
 
 @dataclass(frozen=True)
@@ -174,7 +109,7 @@ def parse_notes(values: Sequence[dict[str, Any] | Note]) -> list[Note]:
 def format_svs_notes(
     values: Sequence[dict[str, Any] | Note], *, frame_duration_ms: float = 25.0
 ) -> str:
-    """Format symbolic notes exactly as the 0722 Lance text processor."""
+    """Encode pitch, duration, and lyric continuation as score tokens."""
 
     notes = parse_notes(values)
     if all(note.note_type is None for note in notes):

@@ -14,13 +14,17 @@
   </p>
   <p>
     <a href="#introduction">Introduction</a> &nbsp;&middot;&nbsp;
+    <a href="#roadmap">Roadmap</a> &nbsp;&middot;&nbsp;
     <a href="#installation">Installation</a> &nbsp;&middot;&nbsp;
     <a href="#inference">Inference</a> &nbsp;&middot;&nbsp;
+    <a href="#community">Community</a> &nbsp;&middot;&nbsp;
     <a href="#citation">Citation</a>
   </p>
 </div>
 
-## Introduction
+<a id="introduction"></a>
+
+## 📖 Introduction
 
 SemBridge bridges discrete semantic supervision and continuous acoustic generation.
 A shared semantic tokenizer anchors both acoustic latents and autoregressive language-model
@@ -32,12 +36,25 @@ The unified model supports **text-to-speech**, **note-conditioned singing**, and
   <img src="asset/sembridge_model.png" alt="SemBridge architecture: semantic anchoring for continuous-latent autoregressive generation" width="100%">
 </div>
 
-## News
+<a id="news"></a>
+
+## 📣 News
 
 - **[2026-10]**: Released the [inference code](https://github.com/ASLP-lab/SemBridge) and [model checkpoints](https://huggingface.co/ASLP-lab/SemBridge).
 - **[2026-08]**: Released the [arXiv paper](https://arxiv.org/pdf/2608.07462).
 
-## Installation
+<a id="roadmap"></a>
+
+## 🗺️ Roadmap
+
+- [x] [arXiv paper](https://arxiv.org/abs/2608.07462) and [code repository](https://github.com/ASLP-lab/SemBridge)
+- [x] [TTS, SVS, and unified inference code](#inference)
+- [x] [Model checkpoints](https://huggingface.co/ASLP-lab/SemBridge)
+- [ ] Fine-tuning code
+
+<a id="installation"></a>
+
+## ⚙️ Installation
 
 Use **Python 3.10**.
 
@@ -54,7 +71,9 @@ python -m pip install torch==2.6.0 torchaudio==2.6.0 \
 python -m pip install -e .
 ```
 
-## Inference
+<a id="inference"></a>
+
+## 🚀 Inference
 
 ```python
 from sembridge import SemBridge
@@ -76,7 +95,9 @@ model.generate(
 | **SVS** | Lyrics, MIDI pitches, note durations | BigVGAN-Large |
 | **Unified** | Ordered speech and singing segments | BigVGAN-Large |
 
-### Examples
+<a id="examples"></a>
+
+### 🎧 Examples
 
 The repository includes **10 complete examples from our [Demo page](https://tiamojames.github.io/SemBridge_Demo/)**:
 4 TTS, 4 SVS, and 2 Unified cases, with reference audio and prepared requests.
@@ -101,7 +122,9 @@ Audio is saved to `outputs/examples/<example_id>.wav`. Set `MODEL=/path/to/SemBr
 to use local weights. See the **[example catalog](examples/README.md)** for the
 complete list, reference recordings, and guidance on using your own songs.
 
-### Single-Sample Inference
+<a id="single-sample-inference"></a>
+
+### 🎙️ Single-Sample Inference
 
 ```bash
 # Text-to-speech
@@ -133,14 +156,24 @@ For SVS, each note contains `text`, MIDI `pitch`, and `duration` **in seconds**.
 See the **[inference guide](docs/INFERENCE.md)** for reference voices, singing and
 mixed-generation examples, sampling controls, and offline loading.
 
-## Acknowledgements
+<a id="community"></a>
+
+## 🤝 Community
+
+- **Windows / ComfyUI:** [ComfyUI-SemBridge](https://github.com/hiroki-abe-58/ComfyUI-SemBridge), an unofficial, community-maintained integration.
+
+<a id="acknowledgements"></a>
+
+## 🙏 Acknowledgements
 
 We thank the authors of the following projects for their open research and resources:
 
 - **Speech generation:** [VoxCPM](https://github.com/OpenBMB/VoxCPM) and [DiTAR](https://arxiv.org/abs/2502.03930).
 - **Audio codecs:** [DAC](https://github.com/descriptinc/descript-audio-codec), [SAC](https://github.com/Soul-AILab/SAC), and [BigVGAN](https://github.com/NVIDIA/BigVGAN).
 
-## Citation
+<a id="citation"></a>
+
+## 📚 Citation
 
 If you find SemBridge useful in your research, please cite:
 
@@ -157,7 +190,9 @@ If you find SemBridge useful in your research, please cite:
 }
 ```
 
-## License
+<a id="license"></a>
+
+## 📄 License
 
 SemBridge code is released under Apache-2.0; upstream portions retain their
 original licenses. See [LICENSE](LICENSE) for terms and third-party notices.

@@ -101,10 +101,9 @@ class MiniCPMLongRoPE(nn.Module):
 
 
 class MiniCPMAttention(nn.Module):
-    def __init__(self, config: MiniCPM4Config, layer_idx: int) -> None:
+    def __init__(self, config: MiniCPM4Config) -> None:
         super().__init__()
         self.config = config
-        self.layer_idx = layer_idx
         self.hidden_size = config.hidden_size
         self.num_heads = config.num_attention_heads
         self.head_dim = config.kv_channels or config.hidden_size // config.num_attention_heads
@@ -141,7 +140,6 @@ class MiniCPMAttention(nn.Module):
         hidden_states: torch.Tensor,
         position_emb: tuple[torch.Tensor, torch.Tensor],
         is_causal: bool,
-        attention_mask: torch.Tensor | None = None,
     ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
         batch, query_length, _ = hidden_states.shape
         query, key, value = self._project(hidden_states)
@@ -156,8 +154,7 @@ class MiniCPMAttention(nn.Module):
             query.contiguous(),
             key,
             value,
-            attn_mask=attention_mask,
-            is_causal=is_causal and attention_mask is None,
+            is_causal=is_causal,
         )
         output = output.transpose(1, 2).reshape(
             batch, query_length, self.num_heads * self.head_dim
@@ -203,9 +200,9 @@ class MiniCPMMLP(nn.Module):
 
 
 class MiniCPMDecoderLayer(nn.Module):
-    def __init__(self, config: MiniCPM4Config, layer_idx: int) -> None:
+    def __init__(self, config: MiniCPM4Config) -> None:
         super().__init__()
-        self.self_attn = MiniCPMAttention(config, layer_idx)
+        self.self_attn = MiniCPMAttention(config)
         self.mlp = MiniCPMMLP(config)
         self.input_layernorm = MiniCPMRMSNorm(config.hidden_size, config.rms_norm_eps)
         self.post_attention_layernorm = MiniCPMRMSNorm(config.hidden_size, config.rms_norm_eps)
@@ -223,11 +220,10 @@ class MiniCPMDecoderLayer(nn.Module):
         hidden_states: torch.Tensor,
         position_emb: tuple[torch.Tensor, torch.Tensor],
         is_causal: bool,
-        attention_mask: torch.Tensor | None = None,
     ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
         residual = hidden_states
         hidden_states, cache = self.self_attn(
-            self.input_layernorm(hidden_states), position_emb, is_causal, attention_mask
+            self.input_layernorm(hidden_states), position_emb, is_causal
         )
         hidden_states = self._residual(residual, hidden_states)
         residual = hidden_states
@@ -255,7 +251,6 @@ class MiniCPMDecoderLayer(nn.Module):
 class MiniCPMModel(nn.Module):
     def __init__(self, config: MiniCPM4Config) -> None:
         super().__init__()
-        self.vocab_size = config.vocab_size
         self.config = config
         self.embed_tokens: nn.Module
         if config.vocab_size > 0:
@@ -263,7 +258,7 @@ class MiniCPMModel(nn.Module):
         else:
             self.embed_tokens = nn.Identity()
         self.layers = nn.ModuleList(
-            [MiniCPMDecoderLayer(config, index) for index in range(config.num_hidden_layers)]
+            [MiniCPMDecoderLayer(config) for _ in range(config.num_hidden_layers)]
         )
         self.norm = MiniCPMRMSNorm(config.hidden_size, config.rms_norm_eps)
         self.rope_emb = MiniCPMLongRoPE(config)
@@ -273,55 +268,17 @@ class MiniCPMModel(nn.Module):
         self,
         inputs_embeds: torch.Tensor,
         is_causal: bool = True,
-        return_hidden_layer: int | None = None,
-        position_ids: torch.Tensor | None = None,
-        attention_mask: torch.Tensor | None = None,
-    ):
-        if position_ids is None:
-            position_ids = torch.arange(
-                inputs_embeds.size(1), device=inputs_embeds.device, dtype=torch.long
-            )
-        else:
-            position_ids = position_ids.to(inputs_embeds.device, dtype=torch.long)
-        if return_hidden_layer is not None and not 1 <= return_hidden_layer <= len(self.layers):
-            raise ValueError(
-                f"return_hidden_layer must be in [1, {len(self.layers)}], got {return_hidden_layer}"
-            )
+    ) -> tuple[torch.Tensor, list[tuple[torch.Tensor, torch.Tensor]]]:
+        position_ids = torch.arange(
+            inputs_embeds.size(1), device=inputs_embeds.device, dtype=torch.long
+        )
         position_emb = self.rope_emb(position_ids)
-        if attention_mask is not None:
-            attention_mask = attention_mask.to(inputs_embeds.device, dtype=torch.bool)
-            length = inputs_embeds.size(1)
-            if attention_mask.ndim == 2:
-                if attention_mask.shape != (inputs_embeds.size(0), length):
-                    raise ValueError("2-D attention_mask must have shape [batch, length]")
-                attention_mask = attention_mask[:, None, None, :]
-            elif attention_mask.ndim == 3:
-                attention_mask = attention_mask[:, None, :, :]
-            elif attention_mask.ndim != 4:
-                raise ValueError("attention_mask must be [B,K], [B,Q,K], or [B,1,Q,K]")
-            if attention_mask.size(-1) != length:
-                raise ValueError("attention_mask key length differs from the input sequence")
-            if attention_mask.size(-2) not in {1, length}:
-                raise ValueError("attention_mask query length must be 1 or the input length")
-            if is_causal:
-                causal = torch.ones(
-                    length, length, dtype=torch.bool, device=inputs_embeds.device
-                ).tril()
-                attention_mask = attention_mask & causal.view(1, 1, length, length)
         hidden_states = inputs_embeds
         caches: list[tuple[torch.Tensor, torch.Tensor]] = []
-        selected = None
-        for layer_index, layer in enumerate(self.layers, start=1):
-            hidden_states, cache = layer(
-                hidden_states, position_emb, is_causal, attention_mask
-            )
+        for layer in self.layers:
+            hidden_states, cache = layer(hidden_states, position_emb, is_causal)
             caches.append(cache)
-            if layer_index == return_hidden_layer:
-                selected = hidden_states
-        final = self.norm(hidden_states)
-        if return_hidden_layer is not None:
-            return final, caches, selected
-        return final, caches
+        return self.norm(hidden_states), caches
 
     def forward_step(self, inputs_embeds: torch.Tensor, position_id: int) -> torch.Tensor:
         if self.kv_cache is None:

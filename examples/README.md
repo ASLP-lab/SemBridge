@@ -94,7 +94,7 @@ See the [inference guide](../docs/INFERENCE.md) for the Python API and full opti
 ## Sources
 
 The reference audio is copied unchanged from the public Demo. [index.json](index.json)
-records the source revision, public audio URLs, SHA-256 hashes, and original
+records the source revision, public audio URLs, and original
 sample identifiers. TTS annotations come from Seed-TTS; the singing annotations
 come from GTSinger and Opencpop. Spoken character references are identified by
 their Demo sample IDs.

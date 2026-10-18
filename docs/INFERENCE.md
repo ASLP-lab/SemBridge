@@ -4,6 +4,10 @@ The model is `ASLP-lab/SemBridge`. Inference needs only this checkpoint and
 this package, not the external GLM semantic tokenizer used for training.
 BigVGAN uses PyTorch operations without custom CUDA kernels.
 
+This package supports the released model-directory format. Training checkpoints
+must be exported to that format before loading; training and fine-tuning code
+are not included in this release.
+
 ## Prepared Examples
 
 Start with the [Demo examples](../examples/README.md). Each request
@@ -161,18 +165,6 @@ unified_audiovae.safetensors
 
 Keep the paired configuration and weight files together. A single
 `model.safetensors` file is not a complete inference model.
-
-Check exact tensor loading without generating audio:
-
-```bash
-sembridge-infer --model ASLP-lab/SemBridge --task svs --decoder bigvgan \
-  --validate-only --device cpu --dtype float32
-```
-
-This loads the full model on CPU and needs sufficient RAM. It does not require
-`SHA256SUMS.json`, `sembridge_metadata.json`, or a model README. It checks
-tensor compatibility and shared-encoder consistency, not historical release
-identity or audio quality.
 
 For generation, use CUDA with BF16. CPU requires `--dtype float32` and is much
 slower. The example script loads the model once and executes requests sequentially on one GPU.

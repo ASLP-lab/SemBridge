@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import json
 import math
 from pathlib import Path
 from typing import Literal
 
 import torch
 from pydantic import BaseModel
+from safetensors.torch import load_file
 from torch import nn
 from torch.distributions import Beta
 from torch.nn import functional as F
@@ -283,7 +283,6 @@ class AudioVAEConfig(BaseModel):
     sample_rate: int = 16_000
     use_noise_block: bool = False
     use_psd: bool = False
-    is_finetuning: bool = False
 
 
 class SemanticAcousticVAE(nn.Module):
@@ -346,8 +345,6 @@ class SemanticAcousticVAE(nn.Module):
                 direction.transpose(1, 2), kappa.squeeze(1)
             ).rsample()
             return sample.transpose(1, 2) * math.sqrt(self.latent_dim)
-        if self.config.is_finetuning:
-            return mean
         return mean + torch.randn_like(mean) * torch.exp(0.5 * logvar.clamp(-12, 12))
 
     def decode(self, latent: torch.Tensor) -> torch.Tensor:
@@ -378,33 +375,6 @@ def _savae_artifact_paths(root: Path, variant: str) -> tuple[Path, Path]:
     return root / config_name, root / weights_name
 
 
-def save_savae_pretrained(
-    model: SemanticAcousticVAE,
-    destination: str | Path,
-    *,
-    variant: str = "default",
-) -> Path:
-    """Write the inference-only codec without pickle-based model payloads."""
-
-    try:
-        from safetensors.torch import save_file
-    except ImportError as exc:
-        raise RuntimeError("safetensors is required to export the SA-VAE") from exc
-    output = Path(destination)
-    output.mkdir(parents=True, exist_ok=True)
-    config_path, weights_path = _savae_artifact_paths(output, variant)
-    state = {
-        key: value.detach().cpu().contiguous()
-        for key, value in model.state_dict().items()
-    }
-    save_file(state, str(weights_path))
-    config_path.write_text(
-        json.dumps(model.config.model_dump(), indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    return output
-
-
 def load_savae_pretrained(
     path: str | Path,
     *,
@@ -414,24 +384,9 @@ def load_savae_pretrained(
 ) -> SemanticAcousticVAE:
     """Load a public inference-only SA-VAE directory."""
 
-    try:
-        from safetensors.torch import load_file
-    except ImportError as exc:
-        raise RuntimeError("safetensors is required to load the SA-VAE") from exc
     root = Path(path)
     config_path, weights_path = _savae_artifact_paths(root, variant)
-    if not config_path.is_file():
-        raise FileNotFoundError(config_path)
-    if not weights_path.is_file():
-        raise FileNotFoundError(weights_path)
     config = AudioVAEConfig.model_validate_json(config_path.read_text(encoding="utf-8"))
     model = SemanticAcousticVAE(config).to(device)
-    incompatible = model.load_state_dict(load_file(str(weights_path), device="cpu"), strict=False)
-    if strict and (incompatible.missing_keys or incompatible.unexpected_keys):
-        raise ValueError(
-            "public SA-VAE checkpoint mismatch: "
-            f"missing={list(incompatible.missing_keys)}, "
-            f"unexpected={list(incompatible.unexpected_keys)}"
-        )
-    model.eval()
-    return model
+    model.load_state_dict(load_file(str(weights_path), device="cpu"), strict=strict)
+    return model.eval()

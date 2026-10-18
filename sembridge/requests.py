@@ -1,4 +1,4 @@
-"""Portable inference requests shared by the CLI and ready-to-run examples."""
+"""JSON inputs and generation options for SemBridge inference."""
 
 from __future__ import annotations
 
@@ -32,24 +32,26 @@ def resolve_generation_options(
         if unknown:
             raise ValueError(f"unknown generation settings: {', '.join(sorted(unknown))}")
         result.update({key: value for key, value in values.items() if value is not None})
+    return result
+
+
+def validate_generation_options(options: dict[str, Any]) -> None:
+    """Check resolved sampling values at the inference entry point."""
     for key in ("max_new_patches", "min_new_patches", "seed", "flow_steps"):
-        value = result[key]
-        if key == "flow_steps" and value is None:
-            continue
+        value = options[key]
         if isinstance(value, bool) or not isinstance(value, int):
             raise ValueError(f"{key} must be an integer")
-    if result["max_new_patches"] < 1 or not 0 <= result["min_new_patches"] <= result["max_new_patches"]:
+    if options["max_new_patches"] < 1 or not 0 <= options["min_new_patches"] <= options["max_new_patches"]:
         raise ValueError("require 0 <= min_new_patches <= max_new_patches and max_new_patches > 0")
-    if result["flow_steps"] is not None and result["flow_steps"] < 2:
+    if options["flow_steps"] < 2:
         raise ValueError("flow_steps must be at least 2")
     for key in ("cfg_value", "temperature"):
-        value = result[key]
-        if value is not None and (
+        value = options[key]
+        if (
             isinstance(value, bool) or not isinstance(value, (int, float))
             or not math.isfinite(value) or value < 0
         ):
             raise ValueError(f"{key} must be a finite, non-negative number")
-    return result
 
 
 def load_request(
@@ -58,7 +60,7 @@ def load_request(
     task: str | None = None,
     generation_overrides: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Return keyword arguments for ``SemBridge.generate[_to_file]``.
+    """Return keyword arguments for ``SemBridge.generate``.
 
     Reference paths are relative to the request JSON, not the working directory.
     Optional ``generation`` settings are flattened into the returned arguments.
@@ -88,16 +90,6 @@ def load_request(
         if not prompt_path.is_absolute():
             prompt_path = request_path.parent / prompt_path
         prompt_path = prompt_path.resolve()
-        if not prompt_path.is_file():
-            raise FileNotFoundError(f"reference audio not found: {prompt_path}")
-        if not isinstance(record.get("prompt_text"), str) or not record["prompt_text"].strip():
-            raise ValueError("prompt_audio requires its matching prompt_text")
         record["prompt_audio"] = prompt_path
-    elif record.get("prompt_text"):
-        raise ValueError("prompt_text requires prompt_audio")
-    if record.get("prompt_task") is not None and (
-        not isinstance(record["prompt_task"], str) or record["prompt_task"] not in {"speech", "singing"}
-    ):
-        raise ValueError("prompt_task must be speech or singing")
     record.update(resolve_generation_options(record.pop("generation", None), generation_overrides))
     return record

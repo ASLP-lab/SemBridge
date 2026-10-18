@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 
-from .requests import load_request, resolve_generation_options
+from .requests import load_request
 
 
 def infer_main(argv: list[str] | None = None) -> int:
@@ -14,14 +13,12 @@ def infer_main(argv: list[str] | None = None) -> int:
     parser.add_argument("--task", choices=("tts", "svs", "unified"), required=True)
     parser.add_argument("--model", default="ASLP-lab/SemBridge",
                         help="Local model directory or Hugging Face model ID")
-    parser.add_argument("--input", help="Request JSON file")
+    parser.add_argument("--input", required=True, help="Request JSON file")
     parser.add_argument("--output", default="outputs/generated.wav")
     parser.add_argument("--decoder", choices=("auto", "native", "bigvgan"), default="auto")
     parser.add_argument("--revision", help="Pin a Hugging Face model revision")
     parser.add_argument("--cache-dir")
     parser.add_argument("--local-files-only", action="store_true")
-    parser.add_argument("--validate-only", action="store_true",
-                        help="Load the model and check compatibility without generating audio")
     parser.add_argument("--max-patches", type=int)
     parser.add_argument("--min-patches", type=int)
     parser.add_argument("--flow-steps", type=int)
@@ -43,17 +40,6 @@ def infer_main(argv: list[str] | None = None) -> int:
     }
     from .pipeline import SemBridge
 
-    if args.validate_only:
-        try:
-            resolve_generation_options(overrides=generation_overrides)
-        except ValueError as exc:
-            parser.error(str(exc))
-        pipeline = SemBridge.from_pretrained(args.model, **load_options)
-        print(json.dumps(pipeline.validation_summary(task=args.task, decoder=args.decoder),
-                         sort_keys=True))
-        return 0
-    if not args.input:
-        parser.error("--input is required for generation")
     if Path(args.output).suffix.lower() != ".wav":
         parser.error("--output must end in .wav")
     try:

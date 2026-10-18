@@ -1,11 +1,8 @@
-"""Checkpoint-compatible continuous SemBridge Stage-II generator."""
+"""Autoregressive inference for continuous acoustic patches."""
 
 from __future__ import annotations
 
-from typing import Any
-
 import torch
-from einops import rearrange
 from torch import nn
 from torch.nn import functional as F
 
@@ -15,46 +12,15 @@ from .local_dit import SemBridgeLocalDiT
 from .local_encoder import SemBridgeLocalEncoder
 from .minicpm4 import MiniCPMModel
 
-SPEECH_IGNORE_INDEX = -100
-
-
-def shift_right(
-    inputs: torch.Tensor, sequence_ids: torch.Tensor | None = None
-) -> torch.Tensor:
-    """Causally shift while clearing padding and packed-sample boundaries."""
-
-    shifted = torch.cat((torch.zeros_like(inputs[:, :1]), inputs[:, :-1]), dim=1)
-    if sequence_ids is None:
-        return shifted
-    if sequence_ids.shape != inputs.shape[:2]:
-        raise ValueError("sequence_ids must align with the packed batch")
-    valid = sequence_ids.ge(0)
-    same_as_previous = torch.cat(
-        (
-            torch.zeros_like(valid[:, :1]),
-            sequence_ids[:, 1:].eq(sequence_ids[:, :-1]),
-        ),
-        dim=1,
-    )
-    keep = valid & same_as_previous
-    return shifted * keep.view(*keep.shape, *([1] * (inputs.ndim - 2))).to(shifted.dtype)
-
 
 class SemBridgeGenerator(nn.Module):
-    """Continuous-latent generator used by the SemBridge paper.
-
-    Attribute names match the archived model so generator checkpoints can be
-    loaded without introducing a ``generator.`` prefix. The acoustic codec is
-    deliberately separate: training consumes precomputed 2x64 patches, and
-    inference returns continuous patches for an explicitly supplied SA-VAE.
-    """
+    """Generate acoustic patches with the released SemBridge weights."""
 
     def __init__(self, config: GeneratorConfig) -> None:
         super().__init__()
         self.config = config
         self.feat_dim = config.feat_dim
         self.patch_size = config.patch_size
-        self.speech_token_ce_layer = config.semantic_anchor_layer or 0
 
         self.base_lm = MiniCPMModel(config.lm_config())
         self.feat_encoder = SemBridgeLocalEncoder(
@@ -62,32 +28,22 @@ class SemBridgeGenerator(nn.Module):
         )
         self.feat_decoder = UnifiedCFM(
             in_channels=config.feat_dim,
-            cfm_params=config.cfm,
             estimator=SemBridgeLocalDiT(
                 config.dit_config(), in_channels=config.feat_dim
             ),
-            mean_mode=config.dit_mean_mode,
         )
         self.enc_to_lm_proj = nn.Linear(config.encoder_hidden_size, config.hidden_size)
         self.lm_to_dit_proj = nn.Linear(config.hidden_size, config.dit_hidden_size)
         self.stop_proj = nn.Linear(config.hidden_size, config.hidden_size)
         self.stop_actn = nn.SiLU()
         self.stop_head = nn.Linear(config.hidden_size, 2, bias=False)
-        self.stop_loss = nn.CrossEntropyLoss(reduction="none")
+        # Kept for checkpoint loading; generation does not use the semantic head.
         if config.semantic_head_enabled:
             self.speech_token_head: nn.Linear | None = nn.Linear(
                 config.hidden_size, config.semantic_vocab_size
             )
-            self.speech_token_loss: nn.CrossEntropyLoss | None = nn.CrossEntropyLoss(
-                reduction="none", ignore_index=SPEECH_IGNORE_INDEX
-            )
         else:
             self.speech_token_head = None
-            self.speech_token_loss = None
-        # Parameters remain FP32 during paper training.  This separate runtime
-        # dtype reproduces the archived config.dtype casts inside a CUDA
-        # autocast region without creating BF16 master parameters/Adam states.
-        self._compute_dtype: torch.dtype | None = None
 
     @property
     def device(self) -> torch.device:
@@ -96,42 +52,6 @@ class SemBridgeGenerator(nn.Module):
     @property
     def dtype(self) -> torch.dtype:
         return next(self.parameters()).dtype
-
-    @property
-    def compute_dtype(self) -> torch.dtype:
-        return self._compute_dtype or self.dtype
-
-    def set_compute_dtype(self, dtype: torch.dtype | None) -> None:
-        if dtype not in {None, torch.float32, torch.bfloat16}:
-            raise ValueError("SemBridge compute dtype must be float32 or bfloat16")
-        self._compute_dtype = dtype
-
-    def _validate_batch(self, batch: dict[str, torch.Tensor]) -> None:
-        required = {
-            "text_tokens",
-            "text_mask",
-            "audio_feats",
-            "audio_mask",
-            "loss_mask",
-            "labels",
-        }
-        missing = sorted(required.difference(batch))
-        if missing:
-            raise ValueError(f"generator batch is missing: {', '.join(missing)}")
-        audio = batch["audio_feats"]
-        if audio.ndim != 4 or tuple(audio.shape[-2:]) != (
-            self.patch_size,
-            self.feat_dim,
-        ):
-            raise ValueError(
-                f"audio_feats must be [B,T,{self.patch_size},{self.feat_dim}], got {tuple(audio.shape)}"
-            )
-        sequence_shape = batch["text_tokens"].shape
-        for name in ("text_mask", "audio_mask", "loss_mask", "labels"):
-            if batch[name].shape != sequence_shape:
-                raise ValueError(f"{name} must have shape {tuple(sequence_shape)}")
-        if audio.shape[:2] != sequence_shape:
-            raise ValueError("audio_feats and packed text sequence must share B,T dimensions")
 
     def _embed_inputs(
         self,
@@ -152,141 +72,6 @@ class SemBridgeGenerator(nn.Module):
             text_mask.unsqueeze(-1) * text_embed
             + audio_mask.unsqueeze(-1) * feat_embed
         )
-
-    def forward(
-        self,
-        *,
-        text_tokens: torch.Tensor,
-        text_mask: torch.Tensor,
-        audio_feats: torch.Tensor,
-        audio_mask: torch.Tensor,
-        loss_mask: torch.Tensor,
-        labels: torch.Tensor,
-        speech_token_labels: torch.Tensor | None = None,
-        task_tokens: torch.Tensor | None = None,
-        position_ids: torch.Tensor | None = None,
-        sequence_ids: torch.Tensor | None = None,
-        progress: float = 0.0,
-        diff_weight: float = 1.0,
-        stop_weight: float = 1.0,
-        semantic_weight: float = 0.1,
-    ) -> dict[str, torch.Tensor]:
-        batch = {
-            "text_tokens": text_tokens,
-            "text_mask": text_mask,
-            "audio_feats": audio_feats,
-            "audio_mask": audio_mask,
-            "loss_mask": loss_mask,
-            "labels": labels,
-        }
-        self._validate_batch(batch)
-        text_tokens = text_tokens.to(self.device, dtype=torch.long)
-        compute_dtype = self.compute_dtype
-        text_mask = text_mask.to(self.device, dtype=compute_dtype)
-        audio_feats = audio_feats.to(self.device, dtype=compute_dtype)
-        audio_mask = audio_mask.to(self.device, dtype=compute_dtype)
-        loss_mask = loss_mask.to(self.device, dtype=compute_dtype)
-        labels = labels.to(self.device, dtype=torch.long)
-        if task_tokens is not None:
-            task_tokens = task_tokens.to(self.device, dtype=torch.long)
-        if speech_token_labels is not None:
-            speech_token_labels = speech_token_labels.to(self.device, dtype=torch.long)
-        if position_ids is not None:
-            if position_ids.shape != text_tokens.shape:
-                raise ValueError("position_ids must align with the packed batch")
-            position_ids = position_ids.to(self.device, dtype=torch.long)
-        attention_mask = None
-        if sequence_ids is not None:
-            if sequence_ids.shape != text_tokens.shape:
-                raise ValueError("sequence_ids must align with the packed batch")
-            sequence_ids = sequence_ids.to(self.device, dtype=torch.long)
-            valid = sequence_ids.ge(0)
-            attention_mask = (
-                sequence_ids.unsqueeze(2).eq(sequence_ids.unsqueeze(1))
-                & valid.unsqueeze(2)
-                & valid.unsqueeze(1)
-            )
-
-        combined = self._embed_inputs(
-            text_tokens, text_mask, audio_feats, audio_mask, task_tokens
-        )
-        selected_hidden = None
-        if self.speech_token_head is not None:
-            encoded, _, selected_hidden = self.base_lm(
-                inputs_embeds=combined,
-                is_causal=True,
-                return_hidden_layer=self.speech_token_ce_layer,
-                position_ids=position_ids,
-                attention_mask=attention_mask,
-            )
-            semantic_hidden = self.base_lm.norm(selected_hidden).to(compute_dtype)
-        else:
-            encoded, _ = self.base_lm(
-                inputs_embeds=combined,
-                is_causal=True,
-                position_ids=position_ids,
-                attention_mask=attention_mask,
-            )
-            semantic_hidden = None
-        encoded = encoded.to(compute_dtype)
-
-        lm_hidden = shift_right(encoded, sequence_ids)
-        dit_hidden = rearrange(self.lm_to_dit_proj(lm_hidden), "b t c -> (b t) c")
-        feat_gt = rearrange(audio_feats, "b t p d -> (b t) p d")
-        feat_cond = rearrange(
-            shift_right(audio_feats, sequence_ids), "b t p d -> (b t) p d"
-        )
-        flow_mask = rearrange(
-            loss_mask.unsqueeze(-1).expand(-1, -1, self.patch_size),
-            "b t p -> (b t) 1 p",
-        )
-        diff_loss = self.feat_decoder.compute_loss(
-            feat_gt.transpose(1, 2).contiguous(),
-            dit_hidden,
-            cond=feat_cond.transpose(1, 2).contiguous(),
-            tgt_mask=flow_mask,
-            progress=progress,
-        )
-
-        stop_logits = self.stop_head(self.stop_actn(self.stop_proj(lm_hidden)))
-        stop_losses = self.stop_loss(stop_logits.transpose(1, 2), labels)
-        stop_loss = (stop_losses * loss_mask).sum() / loss_mask.sum().clamp_min(1.0)
-
-        semantic_loss = encoded.new_zeros(())
-        semantic_logits = encoded.new_empty((0,))
-        semantic_top1 = encoded.new_zeros(())
-        if self.speech_token_head is not None and speech_token_labels is not None:
-            semantic_logits = self.speech_token_head(semantic_hidden)
-            valid = speech_token_labels.ne(SPEECH_IGNORE_INDEX)
-            if bool(valid.any()):
-                semantic_loss = F.cross_entropy(
-                    semantic_logits[valid], speech_token_labels[valid]
-                )
-                semantic_top1 = (
-                    semantic_logits[valid].argmax(dim=-1) == speech_token_labels[valid]
-                ).float().mean()
-            else:
-                semantic_loss = semantic_logits.sum() * 0.0
-
-        total = (
-            diff_weight * diff_loss
-            + stop_weight * stop_loss
-            + semantic_weight * semantic_loss
-        )
-        return {
-            "loss": total,
-            "loss/diff": diff_loss,
-            "loss/stop": stop_loss,
-            "loss/speech_token": semantic_loss,
-            "metric/speech_token_top1": semantic_top1.detach(),
-            "speech_token_logits": semantic_logits,
-            "feat_gt": rearrange(
-                feat_gt,
-                "(b t) p d -> b d (t p)",
-                b=audio_feats.size(0),
-                p=self.patch_size,
-            ),
-        }
 
     def _build_inference_prefix(
         self,
@@ -479,6 +264,3 @@ class SemBridgeGenerator(nn.Module):
             lm_hidden = self.base_lm.forward_step(patch_embed, position).to(self.dtype)
             previous_patch = patch
         return torch.stack(generated, dim=1)
-
-    def architecture_metadata(self) -> dict[str, Any]:
-        return self.config.model_dump(mode="json")

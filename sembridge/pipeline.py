@@ -12,6 +12,7 @@ from .checkpoint import load_generator_checkpoint
 from .hub import resolve_pretrained_path
 from .infer import _patches_to_codec_latent, _write_pcm16
 from .models import load_savae_pretrained
+from .requests import validate_generation_options
 from .tokenizer import encode_segments, format_svs_notes, load_text_tokenizer
 
 
@@ -22,11 +23,9 @@ class SemBridge:
         self.model_root = model_root
         self.device = torch.device(device)
         self.dtype = dtype
-        self.model, report, self.metadata = load_generator_checkpoint(
-            model_root, device=self.device, dtype=dtype, strict=True
+        self.model = load_generator_checkpoint(
+            model_root, device=self.device, dtype=dtype
         )
-        if not report.is_exact:
-            raise RuntimeError("public generator checkpoint did not load exactly")
         self.tokenizer = load_text_tokenizer(model_root)
         self.codec = load_savae_pretrained(
             model_root, device=self.device, strict=True
@@ -91,7 +90,7 @@ class SemBridge:
         return cls(root, device=device, dtype=dtype_value)
 
     def _validate_and_share_codec_encoder(self) -> None:
-        """Require one latent contract and one frozen encoder across both decoders."""
+        """Share the encoder after checking that both codecs use the same weights."""
 
         if self.unified_codec is self.codec:
             return
@@ -102,7 +101,7 @@ class SemBridge:
             if getattr(self.codec, field) != getattr(self.unified_codec, field)
         }
         if mismatched:
-            raise ValueError(f"default/unified codec contract mismatch: {mismatched}")
+            raise ValueError(f"default/unified codec configuration mismatch: {mismatched}")
         base_encoder = self.codec.encoder.state_dict()
         unified_encoder = self.unified_codec.encoder.state_dict()
         if base_encoder.keys() != unified_encoder.keys() or any(
@@ -123,8 +122,6 @@ class SemBridge:
 
     def _codec_for_task(self, task: str, decoder: str = "auto"):
         normalized = task.lower()
-        if normalized not in {"tts", "speech", "svs", "singing", "mixed", "unified"}:
-            raise ValueError("task must be tts, svs, or unified")
         if decoder not in {"auto", "native", "bigvgan"}:
             raise ValueError("decoder must be auto, native, or bigvgan")
         if decoder != "auto":
@@ -137,37 +134,14 @@ class SemBridge:
             return self.codec
         return self.unified_codec
 
-    def validation_summary(self, *, task: str = "tts", decoder: str = "auto") -> dict[str, Any]:
-        """Report exact runtime loading, not author-release hashes or audio quality."""
-        codec = self._codec_for_task(task, decoder)
-        return {
-            "checkpoint_exact": True,
-            "validation": "runtime_load",
-            "task": task,
-            "decoder": decoder,
-            "selected_decoder_type": codec.config.decoder_type,
-            "selected_decoder_dim": codec.config.decoder_dim,
-            "available_decoders": sorted({
-                "native" if item.config.decoder_type == "causal" else "bigvgan"
-                for item in (self.codec, self.unified_codec)
-            }),
-            "sample_rate": codec.sample_rate,
-            "hop_length": codec.hop_length,
-            "latent_dim": codec.latent_dim,
-            "text_vocab_size": len(self.tokenizer),
-            "lm_layers": self.model.config.num_hidden_layers,
-        }
-
     def _load_prompt(
         self, path: str | Path | None, codec=None
     ) -> torch.Tensor | None:
         if path is None:
             return None
         codec = self.codec if codec is None else codec
-        try:
-            import torchaudio
-        except ImportError as exc:
-            raise RuntimeError("torchaudio is required for prompt audio") from exc
+        import torchaudio
+
         audio, sample_rate = torchaudio.load(str(path))
         if audio.size(0) > 1:
             audio = audio.mean(dim=0, keepdim=True)
@@ -241,20 +215,36 @@ class SemBridge:
         Set ``output`` to save PCM16 audio; returned tensors remain float32 on CPU.
         """
 
+        options = {
+            "max_new_patches": max_new_patches,
+            "min_new_patches": min_new_patches,
+            "flow_steps": (
+                self.generation_config.get("flow_steps", 10) if flow_steps is None else flow_steps
+            ),
+            "cfg_value": (
+                self.generation_config.get("cfg_value", 2.0) if cfg_value is None else cfg_value
+            ),
+            "temperature": (
+                self.generation_config.get("temperature", 1.0)
+                if temperature is None else temperature
+            ),
+            "seed": seed,
+        }
+        validate_generation_options(options)
+        seed = options.pop("seed")
         destination = Path(output) if output is not None else None
         if destination is not None and destination.suffix.lower() != ".wav":
             raise ValueError("raw SemBridge inference output must end in .wav")
-        if prompt_audio is None and prompt_text:
-            raise ValueError("prompt_text requires prompt_audio")
+        if (prompt_audio is None and prompt_text) or (
+            prompt_audio is not None and not (prompt_text and prompt_text.strip())
+        ):
+            raise ValueError("prompt_audio and prompt_text must be provided together")
         target_ids, target_task_ids, generation_task = self._encode_target(
             task=task, text=text, notes=notes, segments=segments
         )
         codec = self._codec_for_task(task, decoder)
-        # Prompt encoding samples z. Seed it too so repeated requests and decoder
-        # A/B runs use the same prompt context, not a fresh random latent.
+        # Seed the sampled prompt latent independently from generation.
         torch.manual_seed(seed)
-        if self.device.type == "cuda":
-            torch.cuda.manual_seed_all(seed)
         prompt = self._load_prompt(prompt_audio, codec)
         prompt_ids = self.tokenizer.encode(prompt_text) if prompt_text else []
         if prompt is not None and not prompt_ids:
@@ -274,8 +264,6 @@ class SemBridge:
             + target_task_ids
         )
         torch.manual_seed(seed)
-        if self.device.type == "cuda":
-            torch.cuda.manual_seed_all(seed)
         patches = self.model.generate_patches(
             text_token_ids=torch.tensor(
                 [all_ids], dtype=torch.long, device=self.device
@@ -286,23 +274,7 @@ class SemBridge:
             task_token_ids=torch.tensor(
                 [all_task_ids], dtype=torch.long, device=self.device
             ),
-            max_new_patches=max_new_patches,
-            min_new_patches=min_new_patches,
-            flow_steps=int(
-                self.generation_config.get("flow_steps", 10)
-                if flow_steps is None
-                else flow_steps
-            ),
-            cfg_value=float(
-                self.generation_config.get("cfg_value", 2.0)
-                if cfg_value is None
-                else cfg_value
-            ),
-            temperature=float(
-                self.generation_config.get("temperature", 1.0)
-                if temperature is None
-                else temperature
-            ),
+            **options,
             normalize_generated_patches=bool(codec.use_psd),
         )
         context_patches = min(2, prompt.size(1)) if prompt is not None else 0

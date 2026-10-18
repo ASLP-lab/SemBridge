@@ -46,7 +46,6 @@ class SemBridgeLocalDiT(nn.Module):
         if config.vocab_size != 0:
             raise ValueError("local DiT MiniCPM4 config must use vocab_size=0")
         self.in_channels = in_channels
-        self.out_channels = in_channels
         self.config = config
         self.in_proj = nn.Linear(in_channels, config.hidden_size, bias=True)
         self.cond_proj = nn.Linear(in_channels, config.hidden_size, bias=True)
