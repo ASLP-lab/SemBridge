@@ -63,10 +63,10 @@ def infer_main(argv: list[str] | None = None) -> int:
         parser.error(f"cannot read request: {exc}")
 
     pipeline = SemBridge.from_pretrained(args.model, **load_options)
-    output = pipeline.generate_to_file(
-        args.output,
+    pipeline.generate(
+        output=args.output,
         decoder=args.decoder,
         **request,
     )
-    print(output)
+    print(Path(args.output))
     return 0

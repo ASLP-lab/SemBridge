@@ -27,15 +27,20 @@ from sembridge import SemBridge
 from sembridge.requests import load_request
 
 model = SemBridge.from_pretrained(
-    "ASLP-lab/SemBridge", device="cuda", dtype="bfloat16"
+    "ASLP-lab/SemBridge", device="cuda:0", dtype="bfloat16"
 )
-model.generate_to_file(
-    "speech.wav", **load_request("examples/tts/zh_r001.json"),
+model.generate(
+    output="speech.wav", **load_request("examples/tts/zh_r001.json"),
 )
-model.generate_to_file(
-    "singing.wav", decoder="bigvgan", **load_request("examples/svs/zh_r001.json"),
+model.generate(
+    output="singing.wav", decoder="bigvgan", **load_request("examples/svs/zh_r001.json"),
 )
 ```
+
+`device="cuda:0"` selects the first visible GPU; use `cuda:1`, `cuda:2`, etc.
+to select another. Indices follow `CUDA_VISIBLE_DEVICES` when it is set.
+`generate()` returns `(waveform, generated_patches)` as float32 CPU tensors.
+Set `output` to also save a PCM16 WAV, or omit it to use the tensors directly.
 
 `decoder="auto"` is the default: TTS uses the native causal decoder; SVS and
 unified use BigVGAN-Large. Either can be selected explicitly for any task.
@@ -69,8 +74,8 @@ Use at least two flow steps.
 Provide a recording with consent and its matching transcript:
 
 ```python
-model.generate_to_file(
-    "speech.wav", task="tts", text="This is the new sentence.",
+model.generate(
+    output="speech.wav", task="tts", text="This is the new sentence.",
     prompt_audio="reference.wav", prompt_text="This is the reference transcript.",
     prompt_task="speech", decoder="bigvgan", seed=42,
 )
@@ -102,7 +107,7 @@ comparisons need the same checkpoint, request, seed and generation settings
 in the same environment. `model.generate(...)` returns waveform and generated
 patches. Bitwise reproducibility across devices/versions is not guaranteed.
 
-## SVS and mixed requests
+## SVS and Mixed Inference
 
 Each note contains `text`, MIDI `pitch`, and `duration` **in seconds**.
 Durations are internally quantized in 25 ms units; do not pass frame counts
@@ -122,15 +127,15 @@ Mixed generation accepts ordered speech/singing `segments`; see
 Both `"task": "mixed"` and `"task": "unified"` work at the top level of JSON.
 
 ```python
-model.generate_to_file(
-    "mixed.wav", **load_request("examples/unified/zh_novel_wukong.json"),
+model.generate(
+    output="mixed.wav", **load_request("examples/unified/zh_novel_wukong.json"),
 )
 ```
 
 ```bash
 sembridge-infer --model ASLP-lab/SemBridge --task unified \
   --input examples/unified/zh_novel_wukong.json --output outputs/unified.wav \
-  --device cuda --dtype bfloat16 --decoder auto
+  --device cuda:0 --dtype bfloat16 --decoder auto
 ```
 
 ## Local, pinned and offline models

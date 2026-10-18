@@ -65,12 +65,14 @@ class SemBridge:
         cls,
         path_or_repo_id: str | Path,
         *,
-        device: str = "cuda",
+        device: str = "cuda:0",
         dtype: str | torch.dtype = "bfloat16",
         revision: str | None = None,
         cache_dir: str | Path | None = None,
         local_files_only: bool = False,
     ) -> "SemBridge":
+        """Load on CPU or a CUDA device such as ``cuda:0`` or ``cuda:1``."""
+
         dtype_value = (
             {
                 "float32": torch.float32,
@@ -215,6 +217,7 @@ class SemBridge:
     @torch.inference_mode()
     def generate(
         self,
+        output: str | Path | None = None,
         *,
         task: str,
         decoder: str = "auto",
@@ -231,12 +234,16 @@ class SemBridge:
         temperature: float | None = None,
         seed: int = 42,
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Return ``(waveform, generated_patches)`` using auto/native/bigvgan decoding.
+        """Generate audio, optionally save a WAV, and return ``(waveform, patches)``.
 
         Auto uses the default codec for TTS and the unified codec for SVS/mixed.
         Explicit selection never silently falls back to a different decoder.
+        Set ``output`` to save PCM16 audio; returned tensors remain float32 on CPU.
         """
 
+        destination = Path(output) if output is not None else None
+        if destination is not None and destination.suffix.lower() != ".wav":
+            raise ValueError("raw SemBridge inference output must end in .wav")
         if prompt_audio is None and prompt_text:
             raise ValueError("prompt_text requires prompt_audio")
         target_ids, target_task_ids, generation_task = self._encode_target(
@@ -311,12 +318,12 @@ class SemBridge:
             waveform = waveform[
                 ..., context_patches * codec.hop_length * self.model.config.patch_size :
             ]
-        return waveform.float().cpu(), patches.float().cpu()
+        waveform, patches = waveform.float().cpu(), patches.float().cpu()
+        if destination is not None:
+            _write_pcm16(destination, waveform, codec.sample_rate)
+        return waveform, patches
 
     def generate_to_file(self, output: str | Path, **kwargs: Any) -> Path:
-        destination = Path(output)
-        if destination.suffix.lower() != ".wav":
-            raise ValueError("raw SemBridge inference output must end in .wav")
-        waveform, _ = self.generate(**kwargs)
-        _write_pcm16(destination, waveform, self.codec.sample_rate)
-        return destination
+        """Compatibility wrapper for ``generate(output=..., ...)``."""
+        self.generate(output=output, **kwargs)
+        return Path(output)

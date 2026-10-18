@@ -22,7 +22,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path, default=os.environ.get("OUTPUT_DIR", "outputs/examples"))
     parser.add_argument("--decoder", choices=("auto", "native", "bigvgan"),
                         default=os.environ.get("DECODER", "auto"))
-    parser.add_argument("--device", default=os.environ.get("DEVICE", "cuda"))
+    parser.add_argument("--device", default=os.environ.get("DEVICE", "cuda:0"))
     parser.add_argument("--dtype", choices=("float32", "float16", "bfloat16"),
                         default=os.environ.get("DTYPE", "bfloat16"))
     parser.add_argument("--revision")
@@ -82,7 +82,7 @@ def main(argv: list[str] | None = None) -> int:
     for index, (entry, request) in enumerate(requests, start=1):
         destination = args.output_dir.expanduser() / f"{entry['id']}.wav"
         print(f"[{index}/{len(requests)}] {entry['id']} -> {destination}", flush=True)
-        model.generate_to_file(destination, decoder=args.decoder, **request)
+        model.generate(output=destination, decoder=args.decoder, **request)
     print(f"Saved {len(requests)} audio files to {args.output_dir.expanduser().resolve()}")
     return 0
 

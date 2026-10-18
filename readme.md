@@ -39,9 +39,7 @@ The unified model supports **text-to-speech**, **note-conditioned singing**, and
 
 ## Installation
 
-Use **Python 3.10+** and a matching **PyTorch / torchaudio 2.6-2.8** pair.
-CUDA inference is recommended; BigVGAN uses standard PyTorch operations and
-does not require custom CUDA extensions.
+Use **Python 3.10**.
 
 ```bash
 conda create -n sembridge python=3.10 -y
@@ -56,11 +54,6 @@ python -m pip install torch==2.6.0 torchaudio==2.6.0 \
 python -m pip install -e .
 ```
 
-For other CUDA versions or CPU-only installation, use the
-[official PyTorch installation commands](https://pytorch.org/get-started/previous-versions/).
-Keep the `torch` and `torchaudio` versions matched. Run the examples below from
-the repository root.
-
 ## Inference
 
 ```python
@@ -69,10 +62,10 @@ from sembridge.requests import load_request
 
 # Automatically download and load the checkpoint.
 model = SemBridge.from_pretrained(
-    "ASLP-lab/SemBridge", device="cuda", dtype="bfloat16"
+    "ASLP-lab/SemBridge", device="cuda:0", dtype="bfloat16"
 )
-model.generate_to_file(
-    "outputs/singing.wav",
+model.generate(
+    output="outputs/singing.wav",
     **load_request("examples/svs/zh_r001.json"),
 )
 ```
@@ -108,23 +101,23 @@ Audio is saved to `outputs/examples/<example_id>.wav`. Set `MODEL=/path/to/SemBr
 to use local weights. See the **[example catalog](examples/README.md)** for the
 complete list, reference recordings, and guidance on using your own songs.
 
-### Single Request
+### Single-Sample Inference
 
 ```bash
 # Text-to-speech
 sembridge-infer --model ASLP-lab/SemBridge --task tts \
   --input examples/tts/zh_r001.json --output outputs/tts.wav \
-  --device cuda --dtype bfloat16
+  --device cuda:0 --dtype bfloat16
 
 # Singing voice synthesis
 sembridge-infer --model ASLP-lab/SemBridge --task svs \
   --input examples/svs/zh_r001.json --output outputs/svs.wav \
-  --device cuda --dtype bfloat16
+  --device cuda:0 --dtype bfloat16
 
 # Mixed speech and singing
 sembridge-infer --model ASLP-lab/SemBridge --task unified \
   --input examples/unified/zh_novel_wukong.json --output outputs/unified.wav \
-  --device cuda --dtype bfloat16
+  --device cuda:0 --dtype bfloat16
 ```
 
 Outputs are **mono, 44.1 kHz WAV**. `--decoder auto` uses the defaults above;
