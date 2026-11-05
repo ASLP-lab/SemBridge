@@ -194,7 +194,5 @@ If you find SemBridge useful in your research, please cite:
 
 ## 📄 License
 
-SemBridge code is released under Apache-2.0; upstream portions retain their
-original licenses. See [LICENSE](LICENSE) for terms and third-party notices.
-Model weights and third-party resources are subject to their respective licenses.
+SemBridge code is released under Apache-2.0; See [LICENSE](LICENSE) for terms and third-party notices.
 Use reference recordings only with permission, and disclose synthetic audio where appropriate.
